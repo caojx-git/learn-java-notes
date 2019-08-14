@@ -1,7 +1,8 @@
-# Aria2GUI+baiduexporter 突破百度网盘限速
+# Aria2GUI+baiduexporter 突破百度网盘限速（该方式已无效，忽略）
 
 [toc]
 
+注意：该方式已无效，忽略
 
 ## 1. 安装chrome插件 
 https://raw.githubusercontent.com/acgotaku/BaiduExporter/master/BaiduExporter.crx

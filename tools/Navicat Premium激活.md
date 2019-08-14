@@ -1,4 +1,4 @@
-# Navicat Premium 激活
+# Navicat Premium 激活（该方式已无效，忽略）
 
 时间：2019年1月11日（好像该方案不能用了，推荐使用DataGrip，网上很多注册码，已经非常好用方便了）
 
@@ -10,6 +10,7 @@ https://www.jianshu.com/p/f3ef78deadaa
 
 [TOC]
 
+注意：该方式已无效，忽略
 
 
 **注意，Navicat Premium可以自己从官网下载，我用的12.0.22.0版本，如果官网最新版本不可以激活，再使用这个版本激活后再升级，注意我使用的是Mac，Windows应该也可以激活。**
