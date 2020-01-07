@@ -193,7 +193,7 @@ b.解析过程：
 
 ### 5.1 B树
 
-B树的定义先看百度百科吧，当前时间(2018/10)我对B树的结构理解也不是很深，后续补充，先上一张图
+B树的定义先看百度百科吧，当前时间(2018/10)我对B树的结构理解也不是很深，可以参考文章：https://mp.weixin.qq.com/s/wGqqSFpBnjpytw8J2Sniyw ，先上一张图
 
 ![](../images/mysql/mysql-sql-3.png)  
 
@@ -227,7 +227,7 @@ alter table tb add unique index idx_name(name);
 复合索引
 alter table tb add index idx_dept_name(dept,name);
 
-注意：如果一个字段是primary key，则改字段默认就是 主键索引	
+注意：如果一个字段是primary key，则该字段默认就是 主键索引	
 ```
 
 方式三
@@ -371,8 +371,8 @@ insert into teacher values (8, 'tl', 8);
 表的执行顺序因数量的个数改变而改变的原因： 笛卡儿积
 
 	a 	b  c
-	4	3  2  =  2*3=6 * 4   =24
-				 3*4=12* 2   =24
+	4	  3  2  =  2*3=6 * 4   =24
+				       3*4=12* 2   =24
 **数据小的表优先查询，执行SQL结果也有可能不一定是该结果，原因是服务层中有SQL优化器，可能会影响我们的的结果**
 
 
@@ -1224,7 +1224,7 @@ on t.cid=c.cid where c.cname='java';
 小表：10
 大表：300
 where 	小表.x 10 = 大表.y 300;  --循环了几次？10
-​		大表.y 300= 小表.x 10	 --循环了300次
+​		        大表.y 300= 小表.x 10	 --循环了300次
 
 
 ```c
@@ -1344,7 +1344,7 @@ explain select * from book where authorid < 4 and typeid =2;--复合索引全部
 select a,b,c from xx..where a=  .. and b =.. ;
 ```
 
-​
+
 （5）like尽量以“常量”开头，不要以'%'开头，否则索引失效
 
 ```mysql
