@@ -16,7 +16,7 @@ learn-java-codes仓库主要用于存放**Java**相关的学习笔记、项目�
   - [learn-java-notes](https://gitee.com/caojx-git/learn-java-notes) 用于存放学习笔记
 
 下图是[Markdown](https://www.typora.io/)编辑器本地查看效果，可以很方便的查看到目录结构，我是在mac平台上编辑的，windows平如果显示效果不佳请更换其他Markdown编辑器。  
-![](images/markdown/markdown_1.png)
+![](./images/markdown/markdown_1.png)
 
 
 ## 目录
