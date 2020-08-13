@@ -7,7 +7,7 @@ kafka官网：http://kafka.apache.org/
 
 ## 一、初识kafka
 
-在实际的业务需求中，我们需要处理各种各样的消息，比如日志，请求，响应等，那么一个号的消息系统应该拥有哪些功能呢？
+在实际的业务需求中，我们需要处理各种各样的消息，比如日志，请求，响应等，那么一个好的消息系统应该拥有哪些功能呢？
 
 - 拥有消息发布和订阅功能，类似于消息队列或企业消息传送系统
 - 能存储消息流，并具备容错性
@@ -260,7 +260,7 @@ import java.util.Map;
  * @author caojx
  * @version 1.0
  * @description 自定义分区分配器
- * @Copyright (c) 2018, Lianjia Group All Rights Reserved.
+ * @Copyright (c) 2018, xxx All Rights Reserved.
  * @date 2018-07-09
  */
 public class Custompartitioner implements Partitioner {
@@ -377,7 +377,7 @@ public class MyConsumer {
                 //间隔100ms,拉取一次数据
                 ConsumerRecords<String, String> records = consumer.poll(100);
                 for (ConsumerRecord<String, String> record : records) {
-                    System.out.println(String.format("topic = %s, partition = %s, key = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
+                    System.out.println(String.format("topic = %s, partition = %s, offset = %s, key = %s, value = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
                     if (record.value().equals("done")) {
                         flag = false;
                     }
@@ -404,7 +404,7 @@ public class MyConsumer {
             //间隔100ms,拉取一次数据
             ConsumerRecords<String, String> records = consumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(String.format("topic = %s, partition = %s, key = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
+                System.out.println(String.format("topic = %s, partition = %s, offset = %s, key = %s, value = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
                 if (record.value().equals("done")) {
                     flag = false;
                 }
@@ -433,7 +433,7 @@ public class MyConsumer {
             //间隔100ms,拉取一次数据
             ConsumerRecords<String, String> records = consumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(String.format("topic = %s, partition = %s, key = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
+                System.out.println(String.format("topic = %s, partition = %s, offset = %s, key = %s, value = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
                 if (record.value().equals("done")) {
                     flag = false;
                 }
@@ -458,7 +458,7 @@ public class MyConsumer {
             //间隔100ms,拉取一次数据
             ConsumerRecords<String, String> records = consumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(String.format("topic = %s, partition = %s, key = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
+                System.out.println(String.format("topic = %s, partition = %s, offset = %s, key = %s, value = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
                 if (record.value().equals("done")) {
                     flag = false;
                 }
@@ -486,7 +486,7 @@ public class MyConsumer {
                 //间隔100ms,拉取一次数据
                 ConsumerRecords<String, String> records = consumer.poll(100);
                 for (ConsumerRecord<String, String> record : records) {
-                    System.out.println(String.format("topic = %s, partition = %s, key = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
+                    System.out.println(String.format("topic = %s, partition = %s, offset = %s, key = %s, value = %s", record.topic(), record.partition(), record.offset(), record.key(), record.value()));
                 }
                 //异步提交
                 consumer.commitAsync();
@@ -533,7 +533,7 @@ public class MyConsumer {
 
 节点：
 
-kafka使用zookeeper来管理集群成员的状态，每隔broker都有唯一的id(在配置文件中指定或是自动生成的)，当broker启动的时候会在zookeeper中注册相应的节点。如果集群中存在相同的id那么新的broker会启动失败，kafka的组件会监听broker节点的变化，broker加入或离开的时候会接收到通知，如果离开broker的节点会消失，但是id任然会在某些节点中存在，如果旧的broker离开，一个新broker且拥有离开broker相同的id的broker加入，那么新的broker这时就会替代之前broker并且会分配同样的topic和分区，这都是kafka自身帮我们完成的。
+kafka使用zookeeper来管理集群成员的状态，每个broker都有唯一的id(在配置文件中指定或是自动生成的)，当broker启动的时候会在zookeeper中注册相应的节点。如果集群中存在相同的id那么新的broker会启动失败，kafka的组件会监听broker节点的变化，broker加入或离开的时候会接收到通知，如果离开broker的节点会消失，但是id任然会在某些节点中存在，如果旧的broker离开，一个新broker且拥有离开broker相同的id的broker加入，那么新的broker这时就会替代之前broker并且会分配同样的topic和分区，这都是kafka自身帮我们完成的。
 
 
 
