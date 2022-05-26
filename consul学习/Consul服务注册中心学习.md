@@ -6,6 +6,10 @@
 
 
 
+学习项目：https://github.com/caojx-git/consul-learn
+
+
+
 # Consul服务注册中心
 
 Netflix Eureka2.X [https://github.com/Netflix/eureka/wiki](https://github.com/Netflix/eureka/wiki) 官方宣告停止开发，但其实对国内的用户影响甚小，一方面国内大都使用的是Eureka1.X系列，并且宫方也在积极维护1.X [https://github.com/Netflix/eureka/releases](https://github.com/Netflix/eureka/releases) 。
