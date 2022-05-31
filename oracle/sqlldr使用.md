@@ -68,15 +68,13 @@ userid=scott/tiger'。位置指定参数的时间必须早于
 ```
 
 ## 三、案例演示  
-假如我们有源文件 WH_SEND20170703153100_2420877.csv文件格式如下，都是以固定符号","分割的。 我们需要将号码字段导入到数据库表wh_send。  
+假如我们有源文件 2420877.csv文件格式如下，都是以固定符号","分割的。 我们需要将号码字段导入到数据库表wh_send。  
 
-1. WH_SEND20170703153100_2420877.csv原文件
+1. 2420877.csv原文件
   提示，源文件主要导出的时候导出csv文件，可以使用PL/SQL Developer工具导出，当然也可以使用普通的文件文件如txt，有固定格式一般可以处理。
 ```text
 姓名,品牌,级别,营业厅,号码,联系地址,邮编,入网时间,月均消费,集团单位,推荐活动,备注8,备注9,备注10
-13636452211,不详,不详,不详,13636452211,,,不详,不详,,,,,
-13636515519,全球通,不详,上海移动公司,13636515519,,,200612,132.5,,,,,
-13636519020,全球通,不详,上海移动公司,13636519020,,,201006,88.4,,,,,
+123456789,全球通,不详,上海移动公司,123456789,,,201006,88.4,,,,,
 ```
 
 2. wh_send表结构
@@ -94,10 +92,10 @@ EXT1         VARCHAR2(30)  Y
 EXT2         VARCHAR2(30)  Y    
 ```
 
-3. WH_SEND20170703153100_2420877.ctl控制器文件
+3. 2420877.ctl控制器文件
 ```text
 load data  --控制文件标识
-infile 'c:/wh/data/WH_SEND20170703153100_2420877.csv' --数据源文件
+infile 'c:/wh/data/2420877.csv' --数据源文件
 append into table wh_send --向 wh_send表中追加记录
 fields terminated by ',' --指定分割符，终止字段值 
 trailing nullcols --代表字段没有值时，允许为空
@@ -107,7 +105,7 @@ trailing nullcols --代表字段没有值时，允许为空
     C3 FILLER, --跳过由PL/SQL Developer生成的第三列序号，即跳过级别字段
     C4 FILLER, --跳过由PL/SQL Developer生成的第四列序号，即跳过联系地址字段
     WH_BILL, --将号码字段插入到数据库表wh_send
-    WH_NAME constant 'WH_SEND20170703153100_2420877.csv',
+    WH_NAME constant '2420877.csv',
     WH_MONTH constant '20170703',
     WH_DONE_DATE "sysdate"
 )
@@ -115,7 +113,7 @@ trailing nullcols --代表字段没有值时，允许为空
 
 4. 执行命令
 ```text
-sqlldr username/password@ip:port/shoth control="c:/wh/ctl/WH_SEND20170703153100_2420877.ctl" log="./sqlldr.log" bad="./sqlldr_err.log" bindsize=8024000 readsize=8024000 errors=999999 rows=200000 skip=1;
+sqlldr username/password@ip:port/dbname control="c:/wh/ctl/2420877.ctl" log="./sqlldr.log" bad="./sqlldr_err.log" bindsize=8024000 readsize=8024000 errors=999999 rows=200000 skip=1;
 ```
 
 5. 使用Java代码生成控制文件和命令执行文件
@@ -186,7 +184,7 @@ public class Process {
             String fileName = file.getName();
             if (fileName != null && fileName.endsWith(".ctl")) {
                 try {
-                    String cmd = "sqlldr newqdgl/aiKc%087@10.10.100.123:1521/shoth control=\"" + "c:\\wh\\ctl\\"  + fileName + "\" log=\"./sqlldr.log\" bad=\"./sqlldr_err.log\" bindsize=8024000 readsize=8024000 errors=999999 rows=200000 skip=1";
+                    String cmd = "sqlldr username/password@ip:port/dbname control=\"" + "c:\\wh\\ctl\\"  + fileName + "\" log=\"./sqlldr.log\" bad=\"./sqlldr_err.log\" bindsize=8024000 readsize=8024000 errors=999999 rows=200000 skip=1";
                     System.out.println(cmd + ";");
                 } catch (Exception e) {
                     System.out.println(fileName);
