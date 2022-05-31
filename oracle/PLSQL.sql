@@ -495,7 +495,7 @@ end;
 本节总结： 两个比较复杂的PL/SQL块
 
 1.说明
-	1.下边的for emm in (select * from newqdgl.agent_point_not_user_sql) loop .. end loop; 中for循环将查询结果
+	1.下边的for emm in (select * from test.agent_point_not_user_sql) loop .. end loop; 中for循环将查询结果
 		集合保存到emm临时变量中，这很像光标cursor的功能
 
 	2.oracle的循环语句在较低的版本中有break表示结束整个循环，不过没有continue跳过本次循环的功能，我们可以通过
@@ -532,7 +532,7 @@ begin
   v_POINTS_INFO_count   :=0;
 
   -- 通过下边这种for循环的方式，可以将查询结果集合保存到一个临时集合变量中，可以达到类似于光标cursor的效果
-  for emm in (select * from newqdgl.agent_point_not_user_sql) loop
+  for emm in (select * from test.agent_point_not_user_sql) loop
 
     dbms_output.put_line('1---' || emm.agent_id || '--' ||emm.curr_point_not_exc);
 
@@ -540,7 +540,7 @@ begin
     --根据代理商编号查询对应积分分表编号
 
     select count(1) into v_POINTS_INFO_count from
-    newqdgl.POINTS_INFO
+    test.POINTS_INFO
      WHERE 1 = 1
        AND POINTS_ID = emm.agent_id;
      if v_POINTS_INFO_count =0 then
@@ -549,7 +549,7 @@ begin
 
     SELECT POINTS_SYS_ID
       into v_pointsSysId
-      FROM newqdgl.POINTS_INFO
+      FROM test.POINTS_INFO
      WHERE 1 = 1
        AND POINTS_ID = emm.agent_id;
 
@@ -565,7 +565,7 @@ begin
     dbms_output.put_line('3----'||v_pointsSysId||'---'||v_iChangePoint);
 
     --3.2更新AGENT_POINT_NOT_USER 表中的不可兑换积分
-    UPDATE newqdgl.AGENT_POINT_NOT_USER
+    UPDATE test.AGENT_POINT_NOT_USER
        set CURR_POINT_NOT_EXC =
            (emm.curr_point_not_exc - v_iChangePoint),
            REC_STATUS         = 1
@@ -581,7 +581,7 @@ begin
     --3.4.1查询积分子表中的信息
     SELECT CURR_POINTS, THISYEAR_VALUED_POINTS
       into v_CurrPoints, v_thisyearValuedPoints
-      FROM newqdgl.ods_points_subinfo
+      FROM test.ods_points_subinfo
      WHERE 1 = 1
        AND POINTS_SYS_ID = v_pointsSysId
        AND POINTS_ID = emm.agent_id;
@@ -633,7 +633,7 @@ begin
     dbms_output.put_line('7----');
 
     --3.4.5 获取业务记录序列
-    SELECT newqdgl.SEQ_DONE_NEW_CODE.NEXTVAL into v_docode FROM DUAL;
+    SELECT test.SEQ_DONE_NEW_CODE.NEXTVAL into v_docode FROM DUAL;
 
     INSERT INTO points_subcount_info_temp
       (points_sys_id,
@@ -677,9 +677,9 @@ begin
 
     dbms_output.put_line('积分新增结束' || v_pointsSysId || '---' ||emm.agent_id);
 
-    select newqdgl.SEQ_DONE_CODE.nextval into v_doneCode from dual;
+    select test.SEQ_DONE_CODE.nextval into v_doneCode from dual;
     --插入积分记录
-    insert into newqdgl.Channel_Point_Record_Ext
+    insert into test.Channel_Point_Record_Ext
       (Chanenel_Entity_Id,
        Operate_Code,
        Oper_Value,
@@ -698,7 +698,7 @@ begin
 
     dbms_output.put_line('9----');
 
-    insert into newqdgl.Channel_Point_Record_Ext
+    insert into test.Channel_Point_Record_Ext
       (Chanenel_Entity_Id,
        Operate_Code,
        Oper_Value,
@@ -743,7 +743,7 @@ declare
        v_sql varchar2(1024);
 begin
   for i in 0 .. 9 loop
-     v_sql:='insert into aicbs.points_count0'||i||'_2016  select * from newqdgl.ods_points_count_temp where mod(points_sys_id,10) = '||i;
+     v_sql:='insert into aicbs.points_count0'||i||'_2016  select * from test.ods_points_count_temp where mod(points_sys_id,10) = '||i;
        execute immediate v_sql;
   end loop;
   --commit;
