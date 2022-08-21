@@ -1946,7 +1946,7 @@ mysql> select * from linelock;
 	 update linelock set name ='x' where id >1 and id<9;  --即在此where范围中，没有id=7的数据，则id=7的数据成为间隙。
 	 
 	  insert into linelock values(7,'a7');
-间隙：Mysql会自动给 间隙 加索 ->间隙锁。即本题会自动给id=7的数据加间隙锁（行锁）。
+间隙：Mysql会自动给 间隙 加锁 ->间隙锁。即本题会自动给id=7的数据加间隙锁（行锁）。
 行锁：如果有where，则实际加索的范围就是where后面的范围（不是实际的值）
 ```
 
@@ -2094,7 +2094,7 @@ log-bin=mysql-bin
 replicate-do-db=test
 ```
 
-linux中的数据 授权哪台计算机中的数控 是自己的主计算机
+linux中的从数据授权哪台计算机是自己的主计算机
 ```mysql
 CHANGE MASTER TO 
 MASTER_HOST = '192.168.2.2', 

@@ -1,6 +1,8 @@
-# RabbitMQ 
+#  RabbitMQ 
 
 [TOC]
+
+https://www.rabbitmq.com/
 
 ![](../images/rabbitMQ/rabbitmq_1.png)  
 
@@ -778,7 +780,7 @@ boolean autoAck = true; （自动确认模式） //自动确认模式，如果�
 
 Boolean autoAck = false;(手动模式) //如果有一个消费者挂掉了，就会交付给其他消费者，RabbitMQ支持消息应答，消费者告诉RabbitMQ这个消息已经处理完成了，你可以删除了，然后RabbitMQ就会删除内存中的消息。
 
-消息应答默认(false)是自动打开的。
+消息应答默认(true)是自动打开的。
 
 #### 2. 消息的持久化
 
@@ -987,7 +989,7 @@ reciver:hello ps
 
 
 
-###3.6 Exchange (交换机，转发器)
+### 3.6 Exchange (交换机，转发器)
 
 作用：一方面接收生产中的消息，另一方面是向队列推送消息。
 
