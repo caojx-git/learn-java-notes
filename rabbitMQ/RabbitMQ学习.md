@@ -1848,7 +1848,7 @@ Spring官网：http://spring.io/projects/spring-amqp
 </project>
 ```
 
-####2.content.xml
+#### 2.content.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
