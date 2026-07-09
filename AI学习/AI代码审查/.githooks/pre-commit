@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# pre-commit 会在 commit 真正创建之前执行。
+# 这里用于审查“暂存区”的代码，也就是即将进入本次提交的内容。
+mkdir -p build/ai-review
+
+DIFF_FILE="build/ai-review/pre-commit.diff"
+REPORT_FILE="build/ai-review/pre-commit-review.md"
+
+# 生成暂存区 diff。
+# 注意这里使用 --cached，只审查已经 git add 的内容；工作区未暂存的修改不会进入本次审查。
+# 只审查源码、配置、文档等文本文件，避免把构建产物和二进制文件发给 AI。
+git diff \
+  --cached \
+  --stat \
+  --patch \
+  --find-renames \
+  --find-copies \
+  --unified=80 \
+  -- \
+  '*.java' \
+  '*.kt' \
+  '*.kts' \
+  '*.scala' \
+  '*.groovy' \
+  '*.py' \
+  '*.go' \
+  '*.rs' \
+  '*.c' \
+  '*.h' \
+  '*.cpp' \
+  '*.hpp' \
+  '*.cs' \
+  '*.php' \
+  '*.rb' \
+  '*.swift' \
+  '*.xml' \
+  '*.sql' \
+  '*.yml' \
+  '*.yaml' \
+  '*.toml' \
+  '*.ini' \
+  '*.properties' \
+  '*.md' \
+  '*.json' \
+  '*.ts' \
+  '*.tsx' \
+  '*.js' \
+  '*.jsx' \
+  '*.vue' \
+  '*.svelte' \
+  '*.css' \
+  '*.scss' \
+  '*.less' \
+  '*.html' \
+  '*.sh' \
+  '*.bash' \
+  '*.zsh' \
+  '*.ps1' \
+  'pom.xml' \
+  '**/pom.xml' \
+  'build.gradle' \
+  '**/build.gradle' \
+  'settings.gradle' \
+  '**/settings.gradle' \
+  'package.json' \
+  '**/package.json' \
+  'go.mod' \
+  '**/go.mod' \
+  'go.sum' \
+  '**/go.sum' \
+  'Cargo.toml' \
+  '**/Cargo.toml' \
+  'Cargo.lock' \
+  '**/Cargo.lock' \
+  'pyproject.toml' \
+  '**/pyproject.toml' \
+  'requirements*.txt' \
+  '**/requirements*.txt' \
+  'Dockerfile' \
+  '**/Dockerfile' \
+  'docker-compose*.yml' \
+  '**/docker-compose*.yml' \
+  ':(exclude)target/**' \
+  ':(exclude)build/**' \
+  ':(exclude)dist/**' \
+  ':(exclude)out/**' \
+  ':(exclude)coverage/**' \
+  ':(exclude)node_modules/**' \
+  ':(exclude)**/node_modules/**' \
+  ':(exclude).venv/**' \
+  ':(exclude)venv/**' \
+  ':(exclude)vendor/**' \
+  ':(exclude).next/**' \
+  ':(exclude).nuxt/**' \
+  ':(exclude).gradle/**' \
+  ':(exclude).idea/**' \
+  ':(exclude).vscode/**' \
+  ':(exclude).env' \
+  ':(exclude).env.*' \
+  ':(exclude)**/.env' \
+  ':(exclude)**/.env.*' \
+  ':(exclude)**/*.pem' \
+  ':(exclude)**/*.key' \
+  ':(exclude)**/*.p12' \
+  ':(exclude)**/*.pfx' \
+  ':(exclude)**/*.png' \
+  ':(exclude)**/*.jpg' \
+  ':(exclude)**/*.jpeg' \
+  ':(exclude)**/*.gif' \
+  ':(exclude)**/*.svg' \
+  ':(exclude)**/*.pdf' \
+  ':(exclude)**/*.xlsx' \
+  ':(exclude)**/*.xls' \
+  ':(exclude)**/*.docx' \
+  ':(exclude)**/*.pptx' \
+  ':(exclude)**/*.zip' \
+  ':(exclude)**/*.jar' \
+  ':(exclude)**/*.war' \
+  ':(exclude)**/*.class' \
+  > "${DIFF_FILE}"
+
+# 如果暂存区没有需要审查的文件，直接放行本次提交。
+if [ ! -s "${DIFF_FILE}" ]; then
+  exit 0
+fi
+
+# 临时关闭 set -e，目的是拿到 ai_review.py 的退出码。
+# 如果 AI 发现 BLOCKER、AI 配置缺失或请求失败，脚本会返回非 0。
+set +e
+AI_REVIEW_OUTPUT="${REPORT_FILE}" \
+AI_REVIEW_FAIL_ON_BLOCKER=true \
+AI_REVIEW_FAIL_ON_ERROR=true \
+python3 scripts/ai_review.py "${DIFF_FILE}"
+status=$?
+set -e
+
+echo "AI pre-commit review report: ${REPORT_FILE}"
+
+# 非 0 表示这次提交不能继续。
+# 具体原因看 build/ai-review/pre-commit-review.md。
+if [ "${status}" -ne 0 ]; then
+  echo "Commit blocked by AI pre-commit review." >&2
+  exit "${status}"
+fi

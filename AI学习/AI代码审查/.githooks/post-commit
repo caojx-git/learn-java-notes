@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# post-commit 会在 commit 已经创建成功后执行。
+# 这个阶段已经不能阻止本次提交，所以这里只生成 AI 审查报告，供开发者事后查看。
+mkdir -p build/ai-review
+
+# 把“刚刚提交的 commit”转换成一个 diff 文件。
+# scripts/ai_review.py 只接收 diff 文本，不直接读取 Git 历史。
+DIFF_FILE="build/ai-review/last-commit.diff"
+
+# 只把适合文本审查的源码、配置和文档发给 AI。
+# 二进制文件、构建产物、IDE 配置会在 pathspec 里 exclude 掉，避免浪费 token。
+git show \
+  --format=medium \
+  --stat \
+  --patch \
+  --find-renames \
+  --find-copies \
+  --unified=80 \
+  HEAD \
+  -- \
+  '*.java' \
+  '*.kt' \
+  '*.kts' \
+  '*.scala' \
+  '*.groovy' \
+  '*.py' \
+  '*.go' \
+  '*.rs' \
+  '*.c' \
+  '*.h' \
+  '*.cpp' \
+  '*.hpp' \
+  '*.cs' \
+  '*.php' \
+  '*.rb' \
+  '*.swift' \
+  '*.xml' \
+  '*.sql' \
+  '*.yml' \
+  '*.yaml' \
+  '*.toml' \
+  '*.ini' \
+  '*.properties' \
+  '*.md' \
+  '*.json' \
+  '*.ts' \
+  '*.tsx' \
+  '*.js' \
+  '*.jsx' \
+  '*.vue' \
+  '*.svelte' \
+  '*.css' \
+  '*.scss' \
+  '*.less' \
+  '*.html' \
+  '*.sh' \
+  '*.bash' \
+  '*.zsh' \
+  '*.ps1' \
+  'pom.xml' \
+  '**/pom.xml' \
+  'build.gradle' \
+  '**/build.gradle' \
+  'settings.gradle' \
+  '**/settings.gradle' \
+  'package.json' \
+  '**/package.json' \
+  'go.mod' \
+  '**/go.mod' \
+  'go.sum' \
+  '**/go.sum' \
+  'Cargo.toml' \
+  '**/Cargo.toml' \
+  'Cargo.lock' \
+  '**/Cargo.lock' \
+  'pyproject.toml' \
+  '**/pyproject.toml' \
+  'requirements*.txt' \
+  '**/requirements*.txt' \
+  'Dockerfile' \
+  '**/Dockerfile' \
+  'docker-compose*.yml' \
+  '**/docker-compose*.yml' \
+  ':(exclude)target/**' \
+  ':(exclude)build/**' \
+  ':(exclude)dist/**' \
+  ':(exclude)out/**' \
+  ':(exclude)coverage/**' \
+  ':(exclude)node_modules/**' \
+  ':(exclude)**/node_modules/**' \
+  ':(exclude).venv/**' \
+  ':(exclude)venv/**' \
+  ':(exclude)vendor/**' \
+  ':(exclude).next/**' \
+  ':(exclude).nuxt/**' \
+  ':(exclude).gradle/**' \
+  ':(exclude).idea/**' \
+  ':(exclude).vscode/**' \
+  ':(exclude).env' \
+  ':(exclude).env.*' \
+  ':(exclude)**/.env' \
+  ':(exclude)**/.env.*' \
+  ':(exclude)**/*.pem' \
+  ':(exclude)**/*.key' \
+  ':(exclude)**/*.p12' \
+  ':(exclude)**/*.pfx' \
+  ':(exclude)**/*.png' \
+  ':(exclude)**/*.jpg' \
+  ':(exclude)**/*.jpeg' \
+  ':(exclude)**/*.gif' \
+  ':(exclude)**/*.svg' \
+  ':(exclude)**/*.pdf' \
+  ':(exclude)**/*.xlsx' \
+  ':(exclude)**/*.xls' \
+  ':(exclude)**/*.docx' \
+  ':(exclude)**/*.pptx' \
+  ':(exclude)**/*.zip' \
+  ':(exclude)**/*.jar' \
+  ':(exclude)**/*.war' \
+  ':(exclude)**/*.class' \
+  > "${DIFF_FILE}"
+
+# 如果这次 commit 没有命中上面的文件类型，就不用调用 AI。
+if [ ! -s "${DIFF_FILE}" ]; then
+  exit 0
+fi
+
+# post-commit 只做提醒，不阻塞。
+# AI_REVIEW_FAIL_ON_BLOCKER=false 表示即使 AI 报 BLOCKER，也只写报告。
+# 末尾的 `|| true` 保证网络失败、Key 缺失等问题不会影响已经完成的 commit。
+AI_REVIEW_OUTPUT="build/ai-review/last-commit-review.md" \
+AI_REVIEW_FAIL_ON_BLOCKER=false \
+python3 scripts/ai_review.py "${DIFF_FILE}" || true
+
+echo "AI review report: build/ai-review/last-commit-review.md"
